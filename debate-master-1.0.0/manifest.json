@@ -1,0 +1,16 @@
+{
+  "id": "debate-master",
+  "name": "debate-master",
+  "displayName": "辩论高手养成",
+  "version": "1.0.0",
+  "description": "从底层认知、内容架构、攻防技术、语言表达、临场应变、心态团队六大维度，系统拆解辩论能力体系，帮助用户从新手成长为辩论高手。",
+  "type": "skill",
+  "author": "your-name",
+  "tags": ["debate", "logic", "argumentation", "speaking", "critical-thinking"],
+  "category": "productivity",
+  "entry": "SKILL.md",
+  "output": ["text", "docx"],
+  "config": {
+    "file": "config.json"
+  }
+}

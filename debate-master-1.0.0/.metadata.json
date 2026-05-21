@@ -1,0 +1,11 @@
+{
+  "assetType": "skill",
+  "name": "debate-master",
+  "displayName": "辩论高手养成",
+  "semver": "1.0.0",
+  "description": "六大维度系统拆解辩论能力，从新手到高手的完整训练体系。",
+  "author": "your-name",
+  "tags": ["debate", "logic", "argumentation", "speaking"],
+  "category": "productivity",
+  "entry": "SKILL.md"
+}
