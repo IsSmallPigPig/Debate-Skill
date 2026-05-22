@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/rules_guide
-version: 2.0.0
+version: 2.5.0
 description: |
   辩论赛各类「环节」的通用规则手册——质询、被质询、自证、打岔、自由辩论、申论。
   与 round_structure.md 配合：本文件定义「单个环节怎么打」，

@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/skills-integration
-version: 2.0.0
+version: 2.5.0
 description: |
   教模型「在 Debate 流程的哪一步、为什么、怎么」调用三个第三方 Skill：
     1. debate-master            —— 辩论方法论百科

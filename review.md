@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills-Review
-version: 2.0.0
+version: 2.5.0
 description: |
   辩论赛复盘流程。触发词 `/review`。在已经完成一场 `/debate` 之后调用，用于：
   对指定持方发起针对性质询（攻防演练），由被质询方迭代修改稿件，输出新版攻防表与定稿。

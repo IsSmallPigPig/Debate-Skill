@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/debaters
-version: 2.0.0
+version: 2.5.0
 description: |
   华语辩坛 8 位辩手的索引页。每位辩手的完整思维操作系统在 ./<name>-perspective/SKILL.md。
   编排器选角时优先读本文件做粗筛，再读具体 Skill 文件加载人设。

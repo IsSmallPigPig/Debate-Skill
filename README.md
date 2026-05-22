@@ -39,6 +39,9 @@
 | **第一次用** | `SKILL.md` → `rules/round_structure.md` → `Skills/integration.md` |
 | **要改规则** | `rules/rules_guide.md` |
 | **要改 Prompt** | `prompts/round_prompts.md` |
+| **要改辩稿格式 / 套语** | `rules/script_format.md` ★ v2.3 新增 |
+| **查辩论方法论 / 战术 / 谬误** | `knowledge/` 目录 ★ v2.4 新增 |
+| **学历史实录检索方法（赛前必做）** | `knowledge/06-历史实录检索.md` ★ v2.5 新增 |
 | **要改输出长相** | `templates/transcript_template.md` + `templates/artifacts_spec.md` |
 | **要改"调外部 Skill"的时机/方式** | `Skills/integration.md` |
 | **要加新辩手** | 在 `debaters/` 里照已有目录新建一个 `<name>-perspective/`，并把名字写进 `debaters/debaters.md` |
@@ -57,7 +60,17 @@ Debate-Skill-v2/
 ├── review.md                       # /review 复盘流程
 ├── rules/                          # 规则手册
 │   ├── rules_guide.md              # 单个环节的规则
-│   └── round_structure.md          # 14 轮顺序与时长
+│   ├── round_structure.md          # 14 轮顺序与时长
+│   └── script_format.md            # ★ v2.3 真实辩稿写作规范（参考 debatetimer.cn）
+├── knowledge/                      # ★ v2.4 华语辩论高阶知识库
+│   ├── README.md                   # 知识库索引
+│   ├── 00-philosophy.md            # 辩论哲学与流派（加法/减法派、心法）
+│   ├── 01-立论与战场.md            # 立论、定义战、战场切割
+│   ├── 02-质询与攻防.md            # 质询四步法、确认/处理/展示
+│   ├── 03-自由辩与配合.md          # 团队配合、节奏控场、五大战术
+│   ├── 04-结辩与升华.md            # 战场梳理、价值升华、金句设计
+│   ├── 05-逻辑谬误手册.md          # 24 种常见谬误识别 + 反击模板
+│   └── 06-历史实录检索.md          # ★ v2.5 debatetimer.cn 检索 + 敌情通报整理
 ├── prompts/                        # 调辩手用的 Prompt 模板库
 │   └── round_prompts.md
 ├── templates/                      # 输出与产物模板

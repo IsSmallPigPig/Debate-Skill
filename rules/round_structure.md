@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/round_structure
-version: 2.0.0
+version: 2.5.0
 description: |
   一场完整辩论赛的 14 轮顺序与时长。每轮只写「谁、对谁、做什么、多久、用什么计时」，
   具体规则去 rules_guide.md 查；具体 Prompt 模板去 prompts/round_prompts.md 查；
