@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills
-version: 2.0.0
+version: 2.2.0
 description: |
   运行结构化的多角色华语辩论赛（BP/华语赛制混合），支持自动选角、隔离/内联两种执行模式、
   多轮交锋与中立总结。触发词：
@@ -25,6 +25,7 @@ description: |
 | 看具体的辩论规则（质询/自证/自由辩…） | `rules/rules_guide.md` |
 | 看完整的 14 个轮次怎么排 | `rules/round_structure.md` |
 | 看每一轮该用什么 Prompt 调辩手 | `prompts/round_prompts.md` |
+| **看全场进度看板（v2.1 必读）** | **`prompts/round_prompts.md §8`** ★ |
 | 看最终辩论记录怎么排版 | `templates/transcript_template.md` |
 | 看赛前/赛后要生成哪些稿件文件 | `templates/artifacts_spec.md` |
 | **看本流程依赖的 3 个外部 Skill 怎么用** | **`Skills/integration.md`** ★ |
@@ -56,6 +57,17 @@ description: |
 | `debate-master` | 辩论方法论百科（6 维度、谬误表、攻防口诀） | 见 `Skills/debate-master-1.0.0/` 本地副本，或自带 | ⛔ 推荐 |
 | `multi-search-engine` | 16 引擎元搜索，备赛 / 临场核验 | 见 §2.1 | ✅ 必装 |
 | `self-improvement` | 跨会话经验沉淀到 `.learnings/` | 见 `Skills/integration.md` §3.3 | ⛔ 推荐 |
+
+### 2.1 安装 cocoloop + Multi Search Engine
+
+```text
+Step 1  检查 cocoloop skill 是否为最新版
+        否 → 从 https://dl.cocoloop.cn/cocoloop-main.zip 安装
+
+Step 2  通过 cocoloop 安装 Multi Search Engine
+        URL:  https://dl.cocoloop.cn/bss/skills/gpyangyoujun-multi-search-engine-2.1.3.zip
+        名称: Multi Search Engine
+```
 
 ### 2.2 编排器自检（开赛前必跑）
 
@@ -129,6 +141,18 @@ description: |
 
 ## 6. 顶层执行流（Orchestrator 主循环）
 
+> ⚠️ **关键纪律（v2.2 强化）**：
+> 1. 编排器**必须**逐阶段、逐轮次执行 `prompts/round_prompts.md` 中**每一个**编号的 prompt；
+> 2. **不准**把多个轮次"打包成一段"输出；
+> 3. **不准**因为"觉得够了"就提前进入下一阶段；
+> 4. 每轮必须读到 `【完成】` 契约才能勾选 `prompts/round_prompts.md §8` 进度看板的对应行；
+> 5. 阶段 B 的 5 个子步骤 + 阶段 H 的 6 个子步骤都是**独立 prompt**，要分别发送；
+> 6. 进度看板**必须**在对话里打印出来，每轮更新一次，全程可见。
+> 7. **★ v2.2 新增**：所有辩论环节必须**在对话里完整演出**（含动作括号、辩场用语、多人对话），
+>    严禁只说"已生成 XX.md"。稿件文件是辩论**结束后**由编排器**从对话提炼**出来的派生物。
+>    详见 §7.3 + `prompts/round_prompts.md §0.5`。
+
+
 > 每个阶段右侧的「外部 Skill」栏标出**该阶段要主动调用**的第三方 Skill；
 > 详细调用模板、Prompt、回写约定见 `Skills/integration.md` 对应小节。
 
@@ -139,17 +163,17 @@ description: |
   └─ 外部 Skill: self-improvement     → 读 .learnings 历史先验
                                         （见 Skills/integration.md §3.4「赛前自动读取」）
 
-[阶段 B] 赛前准备
-  ├─ 读 rules/round_structure.md「赛前规划」
-  ├─ 正反两方分别完成「论点架构 / 资料收集 / 攻防表」
-  ├─ 各自落盘  正方-备赛资料.md / 反方-备赛资料.md
-  │           正方-一辩稿.md   / 反方-一辩稿.md
-  │   ⚠ 此阶段正反双方互不可见
+[阶段 B] 赛前准备（★ 5 个子步骤，分别执行，不准合并）
+  ├─ §3B.1 论点架构      ── prompt: prompts/round_prompts.md §3B.1
+  ├─ §3B.2 资料收集      ── prompt: prompts/round_prompts.md §3B.2
+  ├─ §3B.3 攻防表        ── prompt: prompts/round_prompts.md §3B.3
+  ├─ §3B.4 内部头脑风暴  ── prompt: prompts/round_prompts.md §3B.4
+  ├─ §3B.5 一辩稿撰写    ── prompt: prompts/round_prompts.md §3B.5
+  ├─ 落盘  正方-备赛资料.md / 反方-备赛资料.md / 正方-一辩稿.md / 反方-一辩稿.md
+  │   ⚠ 正反双方互不可见，分别走完 5 步
   └─ 外部 Skill:
-      ├─ debate-master       → 6 维度模板，谬误表，攻防口诀
-      │                        （Skills/integration.md §1）
-      └─ multi-search-engine → 每个论点 ≥1 例子 / 每个攻防点 ≥1 反证
-                               （Skills/integration.md §2）
+      ├─ debate-master       → §3B.1/§3B.3 必调（Skills/integration.md §1）
+      └─ multi-search-engine → §3B.2/§3B.3 必调（Skills/integration.md §2）
 
 [阶段 C] 前场（第 1–4 轮）
   ├─ 读 rules/round_structure.md + rules/rules_guide.md
@@ -177,17 +201,21 @@ description: |
   ├─ R13 反四总结
   └─ R14 正四总结
 
-[阶段 H] 评委点评 + 赛后清理
-  ├─ 评委按 rules/rules_guide.md 的标准点评胜负与得失
-  ├─ 用户持方辩手头脑风暴，按 templates/artifacts_spec.md 修改并落盘最终稿件：
-  │    一辩稿 / 二辩稿 / 三辩自证稿 / 四辩结辩稿
-  │    三质二质询稿 / 四质一质询稿
-  │    攻防表（最终版）
+[阶段 H] 评委点评 + 赛后清理（★ 6 个子步骤，分别执行，不准合并）
+  ├─ 评委点评           ── prompt: prompts/round_prompts.md §5
+  ├─ §6.1 全队头脑风暴  ── prompt: prompts/round_prompts.md §6.1
+  ├─ §6.2 一辩稿终稿    ── prompt: prompts/round_prompts.md §6.2
+  ├─ §6.3 ×3            ── prompt: prompts/round_prompts.md §6.3
+  │                        必须执行 3 次，分别产出 二辩稿 / 三辩自证稿 / 四辩结辩稿
+  ├─ §6.4 ×2            ── prompt: prompts/round_prompts.md §6.4
+  │                        必须执行 2 次，分别产出 三质二质询稿 / 四质一质询稿
+  ├─ §6.5 攻防表终稿    ── prompt: prompts/round_prompts.md §6.5
+  ├─ §6.6 落盘自检      ── prompt: prompts/round_prompts.md §6.6
   ├─ 用户质询（可选）
   └─ 外部 Skill:
-      ├─ debate-master       → 评委用方法论术语解释胜负
-      ├─ multi-search-engine → 给修改后稿件补证据
-      └─ self-improvement    → 写 LEARNINGS.md (best_practice)
+      ├─ debate-master       → §5 评委必调
+      ├─ multi-search-engine → §6.2/§6.3 补证据
+      └─ self-improvement    → §6.6 后必调，写 LEARNINGS.md (best_practice)
                                （Skills/integration.md §3.4）
 
 [阶段 I] Synthesis（若开启）
@@ -201,13 +229,81 @@ description: |
 
 ---
 
-## 7. 长度约束
+## 7. 时长约束（v2.2：时间约束 + 对话呈现）
 
-- **每位辩手每轮**：目标 150–350 词；超出会迅速重复自己；
-- **完整 14 轮 + 8 辩手**：预估 6000–9000 词；如果用户要求更长，开赛前提醒；
-- **稿件文件**（一辩稿、结辩稿等）：每篇 300–800 词，可超出辩位上限；
-- 当某辩手 Skill 偏爱长独白（如黄执中），在该轮 Prompt 中明确写**"控制在 300 词以内，
-  只讲一个核心论点"**。
+> ⚠️ **v2.2 关键变化**：
+> 1. **以「真实演讲时长」为基准约束**，而非字数（因为字数下限太低反而让 AI 偷懒）；
+> 2. **字数是时长的换算结果**，基准语速 **280 字/分钟**（接近黄执中/马薇薇现场语速）；
+> 3. **所有辩论环节必须在对话里完整演出**，文件是赛后从对话提炼的派生产物。
+
+### 7.1 时间↔字数换算表
+
+| 时长 | 等价字数下限 | 典型用途 |
+|---|---|---|
+| 30" | ≥ 140 字 | 单次自证段 / 单次自由辩发言 |
+| 1'00" | ≥ 280 字 | 短发言段 |
+| 1'30" | ≥ 420 字 | 三辩质询全场 |
+| 2'00" | ≥ 560 字 | — |
+| 2'30" | ≥ 700 字 | 二辩申论 / 首质 |
+| 3'00" | ≥ 840 字 | — |
+| 3'30" | ≥ 980 字 | 一辩申论 / 总结陈词 / 评委点评 |
+| 4'00" | ≥ 1120 字 | 自由辩论（双边 2'+2'） |
+
+### 7.2 每轮的时长 + 字数下限（速览）
+
+| 阶段 | 子步骤 | 时长 | 字数下限 |
+|---|---|:---:|---:|
+| B | 赛前 5 子步骤（对话讨论）| 5 + 4 + 6 + 3 + 3.5 ≈ 21 分钟 | ≥ 5500 字 |
+| C | R1/R3 一辩申论 | 3'30" 各 | ≥ 980 字 各 |
+| C | R2/R4 首质 | 2'30" 各 | ≥ 700 字 各 |
+| D | R5 战术暂停 | 3 分钟 × 双方 | ≥ 800 字/方 |
+| E | R6/R8 二辩申论 | 2'30" 各 | ≥ 700 字 各 |
+| E | R7/R9 三辩质询 | 1'30" 各 | ≥ 420 字 各 |
+| E | R10/R11 自证 | 约 3 分钟 各 | ≥ 800 字 各 |
+| F | R12 自由辩 | 2' + 2' = 4 分钟 | ≥ 24 次发言 |
+| G | R13/R14 总结 | 3'30" 各 | ≥ 980 字 各 |
+| H | 评委点评 | 3'30" | ≥ 980 字 |
+| H | 赛后 6 子步骤（对话彩排+整理）| ≈ 18 分钟 | ≥ 7000 字 |
+| I | Synthesis | 2 分钟 | ≥ 560 字 |
+
+**完整一场辩论的预期总时长**：≈ 60-70 分钟"真实演讲"
+**完整一场辩论的预期总字数**：**≥ 18000 字**
+（赛前 ≥ 5500 + 主战 ≥ 11000 + 赛后 ≥ 7000 + 评委/Synthesis ≥ 1500）
+
+实际跑下来如果远低于此 → 必然有环节被跳过，按 `prompts/round_prompts.md §8` 进度看板排查。
+
+### 7.3 对话呈现纪律（★ v2.2 核心，比字数更重要）
+
+**所有辩论环节必须在对话里完整演出。** 具体规范见 `prompts/round_prompts.md §0.5`：
+
+1. **每次发言**用标题行 + 动作括号格式（如 `**正方一辩 · 胡渐彪**（3'30"·开始计时）（沉稳起立）`）；
+2. **真实辩场用语**（对方辩友、各位评委、主席）；
+3. **正文是完整发言**，不是摘要；
+4. **质询/自由辩**必须呈现多人多回合 Q-A；
+5. **赛前讨论 + 赛后复盘**也要在对话里演四人对话；
+6. **稿件文件**是辩论**结束后**由编排器**从对话提炼**出来的：
+   - 阶段 B 末由编排器从 §3B.1-§3B.5 对话提炼成 `{side}-备赛资料.md` 和 `{side}-一辩稿.md`；
+   - 阶段 D 末由编排器从 R5 对话提炼成 `{side}-前场整理.md`；
+   - 阶段 H 末由编排器从 §6.1-§6.5 对话提炼成 7 份赛后稿件；
+   - **没有对话**就**没有可提炼的素材**，**不允许跳过对话直接写文件**。
+
+### 7.4 完成契约（v2.1 引入，v2.2 保留）
+
+每一轮 prompt 的最后一行**必须**输出 `【完成】` 契约行，例如：
+
+```text
+【完成】轮次=R1 计时=3'30" 字数=985 含3论点=是 含定义判准=是 含证据URL=3 含金句=是
+```
+
+编排器**只有读到完成契约**才允许进入下一轮。
+关键字段不达标 → 立即重发该轮 prompt 写明"上次 X 字段不达标，请重写"。
+
+### 7.5 重做触发条件汇总
+
+详见 `prompts/round_prompts.md §9`。最常见三种：
+- ❌ 字数低于该轮时长换算下限 → 重发，明确写"上次 X 字 ≈ Y 秒，本轮 Z 秒下限 W 字"
+- ❌ 用"已生成 X.md"代替对话呈现 → 重发，"违反对话呈现规范 §0.5"
+- ❌ 赛后 7 份稿件被合并 → 重发对应 §6.X，"必须 N 份独立文件 + N 次彩排"
 
 ---
 
