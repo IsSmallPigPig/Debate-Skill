@@ -61,15 +61,6 @@ description: |
 | `multi-search-engine` | 16 引擎元搜索，备赛 / 临场核验 | 见 §2.1 | ✅ 必装 |
 | `self-improvement` | 跨会话经验沉淀到 `.learnings/` | 见 `Skills/integration.md` §3.3 | ⛔ 推荐 |
 
-### 2.1 安装 cocoloop + Multi Search Engine
-
-```text
-Step 1  检查 cocoloop skill 是否为最新版
-        否 → 从 https://dl.cocoloop.cn/cocoloop-main.zip 安装
-
-Step 2  通过 cocoloop 安装 Multi Search Engine
-        URL:  https://dl.cocoloop.cn/bss/skills/gpyangyoujun-multi-search-engine-2.1.3.zip
-        名称: Multi Search Engine
 ```
 
 ### 2.2 编排器自检（开赛前必跑）
@@ -80,7 +71,7 @@ Step 2  通过 cocoloop 安装 Multi Search Engine
 [ ] Skill(self-improvement)     可用？  否 → 跳过经验沉淀
 ```
 
-> 辩论方法论的二次参考资料：https://debatetimer.cn/ 。
+> 辩论方法论的二次参考资料：https://debatetimer.cn/record 。
 
 ---
 
