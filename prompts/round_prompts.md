@@ -3,10 +3,6 @@ name: Debate-Skills/round_prompts
 version: 2.5.0
 description: |
   辩论编排器在每一轮里实际发给「子代理 / Skill 调用」的 Prompt 模板集合。
-  v2.3 关键变化：
-    1. 全面去除「（动作/表情/语气）」等小说式标记，对齐真实华语辩稿格式；
-    2. 所有"辩稿/发言"的具体格式规范统一引用 rules/script_format.md，本文件不再重复；
-    3. 所有产物（辩稿、备赛资料、攻防表、辩论实录）按"可直接复制到 Word 打印"标准产出。
 ---
 
 # Round Prompts · 提示模板库（v2.3 真实辩稿版）
