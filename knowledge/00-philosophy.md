@@ -1,6 +1,6 @@
 ---
 name: knowledge/00-philosophy
-version: 2.5.0
+version: 3.0.0
 description: 华语辩论的两大流派、三层目标、五种心法。理解这些再去打具体战术，事半功倍。
 ---
 

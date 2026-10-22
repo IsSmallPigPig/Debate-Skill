@@ -15,7 +15,7 @@
 ## 三个 skill 与 Debate-Skill 的关系
 
 ```text
-Debate-Skill v2 (本仓库)
+Debate-Skill v3 (本仓库)
     │
     ├── 引用 → debate-master           ← 当辩手 / 编排器需要"基础方法论"时查
     ├── 引用 → multi-search-engine     ← 当辩手需要"事实/数据/案例"时查
@@ -23,5 +23,5 @@ Debate-Skill v2 (本仓库)
 ```
 
 > 这三个 skill 是**外部依赖**，本仓库不维护它们的实现，只规定**怎么用**。
-> 如果当前环境没装它们，按 `../SKILL.md §2` 的安装指引装。
+> 如果当前环境没装它们，按 `../SKILL.md §2.1` 的安装指引装（v2.5 中该小节缺失，v3 已补回）。
 > `self-improving-agent` 是 v2 新引入的依赖，安装方法见 `integration.md §3.3`。

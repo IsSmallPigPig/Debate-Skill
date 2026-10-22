@@ -1,0 +1,435 @@
+{
+  "$comment": "Debate-Skills v3.0.0 · 单一事实来源（SSOT）。所有环节的时长、字数下限、校验项都以本文件为准；Markdown 文档中的数字是本文件的人类可读镜像。修改数字只改这里，然后运行 `python3 tools/debate_ctl.py budget` 重新核对文档。",
+  "version": "3.0.0",
+  "speech_rate_cpm": 280,
+  "char_count_rule": "中文字符与全角标点各计 1；连续英文字母/数字计 1 词；URL、Markdown 符号、发言人标签、标题、【完成】/【校验】契约行、【编排器·提炼】块不计入。",
+  "stages": {
+    "A": "开赛确认",
+    "B": "赛前准备",
+    "C": "前场 R1–R4",
+    "D": "战术暂停 R5",
+    "E": "后场 R6–R11",
+    "F": "自由辩论 R12",
+    "G": "总结陈词 R13–R14",
+    "H": "评委点评与赛后清理",
+    "I": "主持人总结"
+  },
+  "presets": {
+    "full": {
+      "label": "完整赛（v2.5 全流程）",
+      "description": "双方赛前 6 步 + 14 轮主战 + 评委 + 赛后 6 步 + Synthesis。",
+      "steps": [
+        "A",
+        "B0-正方", "B1-正方", "B2-正方", "B3-正方", "B4-正方", "B5-正方",
+        "B0-反方", "B1-反方", "B2-反方", "B3-反方", "B4-反方", "B5-反方",
+        "R01", "R02", "R03", "R04",
+        "R05-正方", "R05-反方",
+        "R06", "R07", "R08", "R09", "R10", "R11",
+        "R12",
+        "R13", "R14",
+        "J",
+        "H1", "H2", "H3-二辩", "H3-三辩", "H3-四辩", "H4-三质二", "H4-四质一", "H5", "H6",
+        "S"
+      ]
+    },
+    "standard": {
+      "label": "标准赛",
+      "description": "双方赛前精简为 检索/架构/一辩稿 3 步；14 轮主战完整；赛后只做头脑风暴与攻防表。",
+      "steps": [
+        "A",
+        "B0-正方", "B1-正方", "B5-正方",
+        "B0-反方", "B1-反方", "B5-反方",
+        "R01", "R02", "R03", "R04",
+        "R05-正方", "R05-反方",
+        "R06", "R07", "R08", "R09", "R10", "R11",
+        "R12",
+        "R13", "R14",
+        "J",
+        "H1", "H5",
+        "S"
+      ]
+    },
+    "quick": {
+      "label": "速通赛",
+      "description": "双方只做论点架构；主战保留 立论/首质/自由辩/总结 7 轮；评委 + Synthesis。适合试题、热身。",
+      "steps": [
+        "A",
+        "B1-正方", "B1-反方",
+        "R01", "R02", "R03", "R04",
+        "R12",
+        "R13", "R14",
+        "J",
+        "S"
+      ]
+    }
+  },
+  "steps": {
+    "A": {
+      "stage": "A", "kind": "meta",
+      "title": "开赛确认｜辩题 · 持方 · 阵容",
+      "nav": "A 开赛确认",
+      "file": "A-开赛确认.md",
+      "prompt": "SKILL.md §3–§4",
+      "min_chars": 0
+    },
+
+    "B0": {
+      "stage": "B", "kind": "research", "per_side": true,
+      "title": "赛前 B0 · 历史实录检索｜{side}",
+      "nav": "B0 实录检索",
+      "file": "B0-{side}-历史实录检索.md",
+      "prompt": "prompts/round_prompts.md §3B.0",
+      "knowledge": ["knowledge/06-历史实录检索.md"],
+      "duration": "约 8 分钟", "timing": "—",
+      "min_chars": 1000,
+      "each_speaker_min_turns": 1, "turn_min_chars": 100,
+      "min_urls": 1,
+      "artifact": "{side}-历史实录敌情通报.md"
+    },
+    "B1": {
+      "stage": "B", "kind": "meeting", "per_side": true,
+      "title": "赛前 B1 · 论点架构讨论｜{side}",
+      "nav": "B1 论点架构",
+      "file": "B1-{side}-论点架构.md",
+      "prompt": "prompts/round_prompts.md §3B.1",
+      "knowledge": ["knowledge/01-立论与战场.md"],
+      "duration": "约 5 分钟", "timing": "—",
+      "min_chars": 1200,
+      "each_speaker_min_turns": 3, "turn_min_chars": 80,
+      "artifact": "{side}-备赛资料.md"
+    },
+    "B2": {
+      "stage": "B", "kind": "meeting", "per_side": true,
+      "title": "赛前 B2 · 资料收集对话｜{side}",
+      "nav": "B2 资料收集",
+      "file": "B2-{side}-资料收集.md",
+      "prompt": "prompts/round_prompts.md §3B.2",
+      "knowledge": ["Skills/integration.md §2"],
+      "duration": "约 4 分钟", "timing": "—",
+      "min_chars": 1000,
+      "each_speaker_min_turns": 1, "turn_min_chars": 60,
+      "min_urls": 3,
+      "artifact": "{side}-备赛资料.md"
+    },
+    "B3": {
+      "stage": "B", "kind": "meeting", "per_side": true,
+      "title": "赛前 B3 · 攻防表对抗演练｜{side}",
+      "nav": "B3 攻防演练",
+      "file": "B3-{side}-攻防演练.md",
+      "prompt": "prompts/round_prompts.md §3B.3",
+      "knowledge": ["knowledge/01-立论与战场.md", "knowledge/05-逻辑谬误手册.md"],
+      "duration": "约 6 分钟", "timing": "—",
+      "min_chars": 1500,
+      "each_speaker_min_turns": 1, "turn_min_chars": 60,
+      "artifact": "{side}-备赛资料.md"
+    },
+    "B4": {
+      "stage": "B", "kind": "meeting", "per_side": true,
+      "title": "赛前 B4 · 二次修改头脑风暴｜{side}",
+      "nav": "B4 二次修改",
+      "file": "B4-{side}-二次修改.md",
+      "prompt": "prompts/round_prompts.md §3B.4",
+      "duration": "约 3 分钟", "timing": "—",
+      "min_chars": 800,
+      "each_speaker_min_turns": 1, "turn_min_chars": 100,
+      "artifact": "{side}-备赛资料.md"
+    },
+    "B5": {
+      "stage": "B", "kind": "speech", "per_side": true,
+      "title": "赛前 B5 · 一辩稿彩排｜{side}一辩",
+      "nav": "B5 一辩稿",
+      "file": "B5-{side}-一辩稿彩排.md",
+      "prompt": "prompts/round_prompts.md §3B.5",
+      "knowledge": ["rules/script_format.md §2"],
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢", "第一", "第二", "第三", "综上"],
+      "min_urls": 3,
+      "artifact": "{side}-一辩稿.md"
+    },
+
+    "R01": {
+      "stage": "C", "kind": "speech",
+      "title": "第 1 轮 · 申论｜正方一辩",
+      "nav": "R01 正一申论",
+      "file": "R01-申论-正方一辩.md",
+      "prompt": "prompts/round_prompts.md §4.1",
+      "knowledge": ["knowledge/01-立论与战场.md"],
+      "speaker": "正方一辩",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢", "第一", "第二", "第三", "综上"],
+      "min_urls": 3
+    },
+    "R02": {
+      "stage": "C", "kind": "cross_exam",
+      "title": "第 2 轮 · 质询｜反方四辩 → 正方一辩",
+      "nav": "R02 反四质询正一",
+      "file": "R02-质询-反四质询正一.md",
+      "prompt": "prompts/round_prompts.md §4.2",
+      "knowledge": ["knowledge/02-质询与攻防.md"],
+      "questioner": "反方四辩", "respondent": "正方一辩",
+      "duration": "2'30\"", "timing": "单边",
+      "min_chars": 700, "questioner_min_chars": 420,
+      "min_rounds": 5, "answer_min_chars": 30
+    },
+    "R03": {
+      "stage": "C", "kind": "speech",
+      "title": "第 3 轮 · 申论｜反方一辩",
+      "nav": "R03 反一申论",
+      "file": "R03-申论-反方一辩.md",
+      "prompt": "prompts/round_prompts.md §4.3",
+      "knowledge": ["knowledge/01-立论与战场.md"],
+      "speaker": "反方一辩",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢", "第一", "第二", "第三", "综上"],
+      "min_urls": 3
+    },
+    "R04": {
+      "stage": "C", "kind": "cross_exam",
+      "title": "第 4 轮 · 质询｜正方四辩 → 反方一辩",
+      "nav": "R04 正四质询反一",
+      "file": "R04-质询-正四质询反一.md",
+      "prompt": "prompts/round_prompts.md §4.4",
+      "knowledge": ["knowledge/02-质询与攻防.md"],
+      "questioner": "正方四辩", "respondent": "反方一辩",
+      "duration": "2'30\"", "timing": "单边",
+      "min_chars": 700, "questioner_min_chars": 420,
+      "min_rounds": 5, "answer_min_chars": 30
+    },
+    "R05": {
+      "stage": "D", "kind": "meeting", "per_side": true,
+      "title": "第 5 轮 · 战术暂停｜{side}场下会议",
+      "nav": "R05 战术暂停",
+      "file": "R05-{side}-战术暂停.md",
+      "prompt": "prompts/round_prompts.md §4.5",
+      "duration": "约 3 分钟", "timing": "—",
+      "min_chars": 800,
+      "each_speaker_min_turns": 1, "turn_min_chars": 60,
+      "artifact": "{side}-前场整理.md"
+    },
+    "R06": {
+      "stage": "E", "kind": "speech",
+      "title": "第 6 轮 · 申论｜正方二辩",
+      "nav": "R06 正二申论",
+      "file": "R06-申论-正方二辩.md",
+      "prompt": "prompts/round_prompts.md §4.6",
+      "speaker": "正方二辩",
+      "duration": "2'30\"", "timing": "—",
+      "min_chars": 700,
+      "required_phrases": ["谢谢", "第一", "第二"],
+      "min_urls": 2
+    },
+    "R07": {
+      "stage": "E", "kind": "cross_exam",
+      "title": "第 7 轮 · 质询｜反方三辩 → 正方二辩",
+      "nav": "R07 反三质询正二",
+      "file": "R07-质询-反三质询正二.md",
+      "prompt": "prompts/round_prompts.md §4.7",
+      "knowledge": ["knowledge/02-质询与攻防.md"],
+      "questioner": "反方三辩", "respondent": "正方二辩",
+      "duration": "1'30\"", "timing": "单边",
+      "min_chars": 420, "questioner_min_chars": 280,
+      "min_rounds": 4, "answer_min_chars": 30
+    },
+    "R08": {
+      "stage": "E", "kind": "speech",
+      "title": "第 8 轮 · 申论｜反方二辩",
+      "nav": "R08 反二申论",
+      "file": "R08-申论-反方二辩.md",
+      "prompt": "prompts/round_prompts.md §4.8",
+      "speaker": "反方二辩",
+      "duration": "2'30\"", "timing": "—",
+      "min_chars": 700,
+      "required_phrases": ["谢谢", "第一", "第二"],
+      "min_urls": 2
+    },
+    "R09": {
+      "stage": "E", "kind": "cross_exam",
+      "title": "第 9 轮 · 质询｜正方三辩 → 反方二辩",
+      "nav": "R09 正三质询反二",
+      "file": "R09-质询-正三质询反二.md",
+      "prompt": "prompts/round_prompts.md §4.9",
+      "knowledge": ["knowledge/02-质询与攻防.md"],
+      "questioner": "正方三辩", "respondent": "反方二辩",
+      "duration": "1'30\"", "timing": "单边",
+      "min_chars": 420, "questioner_min_chars": 280,
+      "min_rounds": 4, "answer_min_chars": 30
+    },
+    "R10": {
+      "stage": "E", "kind": "self_proof",
+      "title": "第 10 轮 · 自证｜反方三辩（正方打岔）",
+      "nav": "R10 反三自证",
+      "file": "R10-自证-反方三辩.md",
+      "prompt": "prompts/round_prompts.md §4.10",
+      "knowledge": ["knowledge/02-质询与攻防.md", "knowledge/03-自由辩与配合.md"],
+      "prover": "反方三辩", "interrupter_side": "正方",
+      "duration": "约 3'00\"", "timing": "双边",
+      "min_chars": 800, "min_segments": 6, "segment_min_chars": 140,
+      "interrupt_max": 3, "interrupt_max_chars": 95
+    },
+    "R11": {
+      "stage": "E", "kind": "self_proof",
+      "title": "第 11 轮 · 自证｜正方三辩（反方打岔）",
+      "nav": "R11 正三自证",
+      "file": "R11-自证-正方三辩.md",
+      "prompt": "prompts/round_prompts.md §4.11",
+      "knowledge": ["knowledge/02-质询与攻防.md", "knowledge/03-自由辩与配合.md"],
+      "prover": "正方三辩", "interrupter_side": "反方",
+      "duration": "约 3'00\"", "timing": "双边",
+      "min_chars": 800, "min_segments": 6, "segment_min_chars": 140,
+      "interrupt_max": 3, "interrupt_max_chars": 95
+    },
+    "R12": {
+      "stage": "F", "kind": "free_debate",
+      "title": "第 12 轮 · 自由辩论",
+      "nav": "R12 自由辩",
+      "file": "R12-自由辩论.md",
+      "prompt": "prompts/round_prompts.md §4.12",
+      "knowledge": ["knowledge/03-自由辩与配合.md"],
+      "duration": "双方各 4'00\"", "timing": "双边",
+      "min_chars": 2240,
+      "min_turns": 24, "max_turns": 40,
+      "turn_min_chars": 30, "turn_max_chars": 210,
+      "first_side": "正方", "alternate": true
+    },
+    "R13": {
+      "stage": "G", "kind": "speech",
+      "title": "第 13 轮 · 总结陈词｜反方四辩",
+      "nav": "R13 反四结辩",
+      "file": "R13-总结陈词-反方四辩.md",
+      "prompt": "prompts/round_prompts.md §4.13",
+      "knowledge": ["knowledge/04-结辩与升华.md"],
+      "speaker": "反方四辩",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢"]
+    },
+    "R14": {
+      "stage": "G", "kind": "speech",
+      "title": "第 14 轮 · 总结陈词｜正方四辩",
+      "nav": "R14 正四结辩",
+      "file": "R14-总结陈词-正方四辩.md",
+      "prompt": "prompts/round_prompts.md §4.14",
+      "knowledge": ["knowledge/04-结辩与升华.md"],
+      "speaker": "正方四辩",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢", "反方四辩|对方四辩|对方辩友"]
+    },
+
+    "J": {
+      "stage": "H", "kind": "judge",
+      "title": "评委点评",
+      "nav": "J 评委点评",
+      "file": "J-评委点评.md",
+      "prompt": "prompts/round_prompts.md §5",
+      "knowledge": ["knowledge/05-逻辑谬误手册.md"],
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["胜方|获胜|判给"]
+    },
+    "H1": {
+      "stage": "H", "kind": "meeting",
+      "title": "赛后 H1 · 全队头脑风暴｜{user_side}",
+      "nav": "H1 头脑风暴",
+      "file": "H1-赛后头脑风暴.md",
+      "prompt": "prompts/round_prompts.md §6.1",
+      "duration": "约 5 分钟", "timing": "—",
+      "min_chars": 1400,
+      "each_speaker_min_turns": 1, "turn_min_chars": 280
+    },
+    "H2": {
+      "stage": "H", "kind": "speech",
+      "title": "赛后 H2 · 一辩稿（终稿）彩排｜{user_side}一辩",
+      "nav": "H2 一辩终稿",
+      "file": "H2-一辩稿终稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.2",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "required_phrases": ["谢谢", "第一", "第二", "第三", "综上"],
+      "min_urls": 3,
+      "artifact": "{user_side}-一辩稿-终稿.md"
+    },
+    "H3-二辩": {
+      "stage": "H", "kind": "speech",
+      "title": "赛后 H3 · 二辩稿彩排｜{user_side}二辩",
+      "nav": "H3 二辩稿",
+      "file": "H3-二辩稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.3",
+      "duration": "2'30\"", "timing": "—",
+      "min_chars": 700,
+      "artifact": "{user_side}-二辩稿.md"
+    },
+    "H3-三辩": {
+      "stage": "H", "kind": "speech",
+      "title": "赛后 H3 · 三辩自证稿彩排｜{user_side}三辩",
+      "nav": "H3 三辩自证稿",
+      "file": "H3-三辩自证稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.3",
+      "duration": "约 3'00\"", "timing": "—",
+      "min_chars": 800,
+      "artifact": "{user_side}-三辩自证稿.md"
+    },
+    "H3-四辩": {
+      "stage": "H", "kind": "speech",
+      "title": "赛后 H3 · 四辩结辩稿彩排｜{user_side}四辩",
+      "nav": "H3 四辩结辩稿",
+      "file": "H3-四辩结辩稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.3",
+      "duration": "3'30\"", "timing": "—",
+      "min_chars": 980,
+      "artifact": "{user_side}-四辩结辩稿.md"
+    },
+    "H4-三质二": {
+      "stage": "H", "kind": "script",
+      "title": "赛后 H4 · 三质二质询稿彩排｜{user_side}三辩",
+      "nav": "H4 三质二",
+      "file": "H4-三质二质询稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.4",
+      "duration": "—", "timing": "—",
+      "min_chars": 600,
+      "artifact": "{user_side}-三质二质询稿.md"
+    },
+    "H4-四质一": {
+      "stage": "H", "kind": "script",
+      "title": "赛后 H4 · 四质一质询稿彩排｜{user_side}四辩",
+      "nav": "H4 四质一",
+      "file": "H4-四质一质询稿彩排.md",
+      "prompt": "prompts/round_prompts.md §6.4",
+      "duration": "—", "timing": "—",
+      "min_chars": 600,
+      "artifact": "{user_side}-四质一质询稿.md"
+    },
+    "H5": {
+      "stage": "H", "kind": "meeting",
+      "title": "赛后 H5 · 终版攻防表整理｜{user_side}",
+      "nav": "H5 攻防表",
+      "file": "H5-攻防表整理.md",
+      "prompt": "prompts/round_prompts.md §6.5",
+      "duration": "约 3 分钟", "timing": "—",
+      "min_chars": 800,
+      "each_speaker_min_turns": 1, "turn_min_chars": 60,
+      "artifact": "{user_side}-攻防表.md"
+    },
+    "H6": {
+      "stage": "H", "kind": "meta",
+      "title": "赛后 H6 · 落盘自检（编排器）",
+      "nav": "H6 落盘自检",
+      "file": "H6-落盘自检.md",
+      "prompt": "prompts/round_prompts.md §6.6",
+      "min_chars": 0
+    },
+    "S": {
+      "stage": "I", "kind": "synthesis",
+      "title": "主持人 Synthesis",
+      "nav": "S Synthesis",
+      "file": "S-主持人总结.md",
+      "prompt": "prompts/round_prompts.md §7",
+      "knowledge": ["knowledge/00-philosophy.md"],
+      "duration": "约 2'00\"", "timing": "—",
+      "min_chars": 560
+    }
+  }
+}

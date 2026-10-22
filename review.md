@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills-Review
-version: 2.5.0
+version: 3.0.0
 description: |
   辩论赛复盘流程。触发词 `/review`。在已经完成一场 `/debate` 之后调用，用于：
   对指定持方发起针对性质询（攻防演练），由被质询方迭代修改稿件，输出新版攻防表与定稿。
@@ -104,7 +104,7 @@ description: |
 复盘结束时强制输出：
 
 1. **修订版稿件**（覆盖原文件，文件名不变）：
-   - `<target_side>-一辩稿.md`
+   - `<target_side>-一辩稿-终稿.md`（★v3：若只有赛前版 `<target_side>-一辩稿.md`，则以它为底稿另存为 `-终稿`）
    - `<target_side>-二辩稿.md`
    - `<target_side>-三辩自证稿.md`
    - `<target_side>-四辩结辩稿.md`
@@ -113,9 +113,10 @@ description: |
 2. **完整攻防表**：`<target_side>-攻防表.md`，结构为：
 
    ```markdown
-   | # | 对方攻击点 | 我方回应 | 风险等级 | 备用反击 | 方法论标签 |
-   |---|---|---|---|---|---|
+   | # | 对方攻击点 | 我方主回应 | 备用反击 | 方法论标签 | 风险等级 | 关键证据URL | 出处轮次 |
+   |---|---|---|---|---|---|---|---|
    ```
+   （★v3 统一表头，与 `rules/script_format.md §6.1`、`templates/artifacts_spec.md §2.6` 一致）
 3. **复盘日志**：`<target_side>-复盘日志.md`，按轮记录"对方打了什么 / 我方怎么改"。
 4. **`.learnings/` 沉淀**：本次复盘的精华应已在每轮 Step 6 写入；
    复盘结束时再追加一条**汇总 insight**，记录"本辩题最值得记住的 1 个反直觉结论"。

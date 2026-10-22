@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/knowledge
-version: 2.5.0
+version: 3.0.0
 description: |
   华语辩论的高阶知识库 —— 从历代国辩、世界杯辩论赛、奇葩说等顶级赛事
   与黄执中、胡渐彪、马薇薇、周玄毅、詹青云等辩手的教学/著作里提炼出来的

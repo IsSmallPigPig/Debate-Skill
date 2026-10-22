@@ -662,3 +662,80 @@ debatetimer.cn 自 2019 年起服务全国数十万场辩论赛，公开实录�
 - §3B.0 是**新增**子步骤，原有 §3B.1–§3B.5 prompt 不变；
 - 若 debatetimer.cn 不可访问 → 按 §4.3 降级方案走 multi-search-engine 或跳过；
 - 不影响 v2.4 已经在跑的辩论流程。
+
+---
+
+## v3.0.0 — 协同脚手架 + 机器校验 + 单一事实来源 ⚠️ 重要升级
+
+> 目标：在**完整阅读全部 1.7 万行文档**后，修复跨文件的数字冲突与流程漏洞，把「靠模型自觉」的
+> 环节改成「可验证、可续跑、可协同」。全量审查发现与设计取舍见 `docs/v3-审查与升级报告.md`。
+
+### 🆕 新增
+
+- `rules/presets.json` —— **单一事实来源**：39 个步骤的时长、计时方式、字数下限、回合/段数/发言次数、
+  套语与 URL 要求，以及 `full / standard / quick` 三种规模预设。lint、CLI、协同台都读它。
+- `tools/debate_ctl.py` + `tools/debatekit/`（纯标准库）——
+  `init`（建会话）/ `next`（下一步）/ `step`（标记完成前自动校验）/ `status`（进度看板）/
+  `lint`（机器校验完成契约）/ `locate`（解析网页复制来的定位引用）/ `ask`（待答队列与回写）/
+  `export`（docx / md / html / zip）/ `budget`（按预设列字数下限）。
+- `tools/debatetimer.py` —— debatetimer.cn **官方 MCP** 的命令行客户端（search / summary / batch，
+  自动改写 127.0.0.1 链接，`--save` 存档到会话 research/）。
+- `collab/` —— **辩论协同台**：实时展示 Agent 输出（1.5 秒同步、跟随直播、校验结果与违规段落定位）、
+  导出文档（单文档 / 整场实录 / 全部稿件，Word 中文排版）、逐段或划词「复制位置并提问」、引用篮、
+  待答队列、答案回写后显示在原文旁。附 `collab/PROTOCOL.md`（Agent 侧协议）与示例会话 `collab/demo/`。
+- `templates/evidence_ledger.md` —— 证据台账：URL 只能来自真实工具返回，查不到出处的标【待核实】。
+- `debaters/PERSONA_PROTOCOL.md` —— 48 份辩手研究档案的渐进加载表 + 人设护栏（不改原辩手卡）。
+- `SKILL.md` 新参数 `preset=` / `output=web|chat|both`，新路由 `/debate resume`、`/debate status`、`/ask`、`/export`、
+  粘贴【辩论协同·提问】。
+- `prompts/round_prompts.md` 新增 §0.6「协同落盘协议」、§1.5「互动环节接力协议」。
+- `.gitignore`；删除误提交的 `.DS_Store`。
+
+### 🐛 修复
+
+| # | 问题 | 位置 | 修复 |
+|---|---|---|---|
+| 1 | §2 的 ``` 代码块未闭合，吞掉了「§2.2 编排器自检」；表中引用的 §2.1 安装说明不存在；用 ⛔ 表示「推荐」 | `SKILL.md §2` | 重写 §2，补回 §2.1（含 MCP），级别改为「必需 / 推荐」 |
+| 2 | 主循环把 14 轮 Prompt 指向 `§3.1–§3.14`，实际在 `§4.1–§4.14` | `SKILL.md §6` | 改正全部指针 |
+| 3 | 自证计时：rules_guide 写「单边」，round_structure / prompts / 实录模板写「双边」 | `rules/rules_guide.md §1` | 统一为双边并写明含义 |
+| 4 | 单人发言的总结陈词被标为「单边计时」 | round_structure、prompts §4.13–4.14、实录模板 | 改为「—」 |
+| 5 | 自由辩「4 分钟」却要求「≥24 次 × ≥140 字」（≈12 分钟）；上限写成 40 与 50 两种 | SKILL §7、prompts §4.12、rules | 双方各 4'00"（同国际大专辩论赛）、24–40 次、单次 30–210 字、全场 ≥2240 字 |
+| 6 | 打岔字数 ≤80（rules_guide）与 ≤95（prompts、knowledge/02）冲突 | `rules/rules_guide.md §4.1` | 统一 ≤95 字（20 秒 × 280 字/分） |
+| 7 | 「一辩稿 7 节结构」实际列出 8 节；artifacts_spec 写「≈600–800 字」且结构不同 | SKILL §7.4、artifacts_spec §2.2、实录模板 | 统一 8 节、≥980 字，以 script_format §2 为准 |
+| 8 | 攻防表存在三套不同表头 | artifacts_spec §2.6 / review §5 / script_format §6.1 | 统一 8 列（含方法论标签、关键证据URL、出处轮次） |
+| 9 | 用户持正方时，H2 终稿 `正方-一辩稿.md` 会覆盖赛前版 | artifacts_spec #3/#7、prompts §6.2/§6.6 | 终稿改名 `<user_side>-一辩稿-终稿.md` |
+| 10 | 推荐基线阵容把**庞颖同时放在正方二辩与反方一辩**，违反「不得跨方」 | SKILL §4.1、debaters.md §3 | 新基线：八人各出场一次 |
+| 11 | 全场字数「≥18000」漏算阶段 B 双方各跑一遍 | SKILL §7.2、prompts §8 | 实算 full 34,360（standard 23,100 / quick 11,500） |
+| 12 | §3B.0 要求用 fetch_page 在网页搜索框检索——工具无法操作前端搜索框，`?search=` 参数无效 | prompts §3B.0、knowledge/06 | 改用官方 MCP → CLI 兜底 → site: 搜索；记录链接主机名 bug 与转写误差 |
+| 13 | debaters.md 称「仅詹青云提供了研究档案」，实际 8 人均有，且全仓库无引用 | debaters.md §4 | 修正 + 新增 PERSONA_PROTOCOL.md |
+| 14 | 实录模板落盘清单缺敌情通报与双方一辩稿；二辩申论副标题缺计时方式 | templates/transcript_template.md | 补齐 |
+| 15 | 输入参数 `rounds` 没有任何可选方案（死参数） | SKILL §3 | 由 `preset` 取代（保留兼容） |
+| 16 | 隔离模式下质询/自证/自由辩由**一个**子代理同时写问答双方 | prompts §4.2 等 | §1.5 逐回合接力协议 |
+| 17 | inline 模式无法做到「正反互不可见」却未说明 | SKILL §5 | 声明为软隔离 + lint 引用核对 |
+| 18 | 【完成】契约字数由模型自报，不可靠 | SKILL §7.5 | lint 实测；示例会话中自估「一千多字」的申论实测仅 821 字 |
+| 19 | 要求每个论点带 URL、覆盖率 100%，却没有核验机制，易诱发编造链接 | script_format、prompts §3B.2 | 证据台账 + 【待核实】+ lint 交叉核对 |
+| 20 | 「不足 8 人时兼任」未限定同一方，与「不得跨方」有歧义 | SKILL §4.2、debaters.md | 限定同一方 |
+| 21 | knowledge/01「判准融进定义段」与 script_format「独立判准段」表述冲突 | knowledge/01 §三 | 加注说明两者关系 |
+| 22 | 用户质询与 Synthesis 的先后顺序含糊 | round_structure §3.3 | 明确顺序 |
+| 23 | `self-improvement` 与 `self-improving-agent` 名称混用 | Skills/integration.md | 加命名说明 |
+| 24 | prompts 标题仍写「v2.3」；README 目录名写成 `Debate-Skill-v2/`；仓库提交了 `.DS_Store` | 多处 | 修正；新增 `.gitignore` |
+
+### 📊 v2.5 → v3.0 对比
+
+| 维度 | v2.5 | v3.0 |
+|---|---|---|
+| 数字的出处 | 散落在 6 个文件，互相矛盾 | `rules/presets.json` 一处定义 |
+| 完成契约 | 模型自报 | 机器实测（字数、回合、段数、打岔、交替、括号、旁白、占位符、URL、引用核对） |
+| 规模 | 只有一种（约 3.4 万字） | full / standard / quick |
+| 中断恢复 | 无 | `session.json` + `/debate resume` |
+| 历史实录检索 | fetch 网页（实际不可执行） | 官方 MCP（实测可用）+ CLI 兜底 |
+| 证据 | 只要求「带 URL」 | 证据台账 + 状态 + 交叉核对 |
+| 查看与导出 | 对话 + 散落的 .md | 协同台网页 + Word/MD/HTML/ZIP 导出 |
+| 追问某一段 | 用户手动描述位置 | 复制 `debate://` 定位引用，Agent 自动定位、回写 |
+
+### ⚖️ 行为兼容性
+
+- `output=chat` 与 v2.5 行为一致（全部在对话里演出），无 python / 无文件权限的环境自动使用；
+- 原有 prompt 小节编号（§3B.0–§3B.5、§4.1–§4.14、§5、§6.1–§6.6、§7）全部保留；
+- 有改动的数字：自由辩改为双方各 4'00"（原文本身矛盾），打岔统一为 ≤95 字，一辩终稿改名为 `-终稿`；
+- `rounds` 参数仍可识别（映射到 `preset`）；
+- 新增工具与协同台**零第三方依赖**（Python 3.8+ 标准库、原生 JS）。

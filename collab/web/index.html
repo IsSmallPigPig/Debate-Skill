@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>辩论协同台 · Debate Collab</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f2937'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E8%BE%A9%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn only-narrow" id="navToggle" title="目录">☰</button>
+  <div class="brand">
+    <span class="logo">辩</span>
+    <div class="brand-text">
+      <div class="brand-name">辩论协同台</div>
+      <div class="brand-sub">Debate-Skills v3 · Collab</div>
+    </div>
+  </div>
+  <div class="session-box">
+    <select id="sessionSelect" title="切换会话"></select>
+    <div class="topic-line" id="topicLine"></div>
+  </div>
+  <div class="top-actions">
+    <div class="search">
+      <input id="searchInput" type="search" placeholder="搜索全场发言…（按 / 聚焦）" autocomplete="off">
+      <div id="searchResults" class="search-results" hidden></div>
+    </div>
+    <span class="live" id="liveDot" title="每 1.5 秒与 Agent 输出目录同步"><i></i><span id="liveText">实时</span></span>
+    <div class="dropdown" id="exportDrop">
+      <button class="btn" id="exportBtn">导出 ▾</button>
+      <div class="menu" id="exportMenu" hidden>
+        <div class="menu-title">当前文档</div>
+        <button data-exp="doc:docx">Word（.docx）</button>
+        <button data-exp="doc:md">Markdown（.md）</button>
+        <button data-exp="doc:html">HTML</button>
+        <button data-exp="print">打印 / 另存为 PDF</button>
+        <div class="menu-title">整场实录（按赛程汇编）</div>
+        <button data-exp="all:docx">Word（.docx）</button>
+        <button data-exp="all:md">Markdown（.md）</button>
+        <button data-exp="all:html">HTML</button>
+        <button data-exp="zip">全部稿件打包（.zip）</button>
+        <div class="menu-sep"></div>
+        <label class="menu-opt"><input type="checkbox" id="optClean" checked> 清理契约行 / 编排器提炼</label>
+        <label class="menu-opt"><input type="checkbox" id="optDisclaimer" checked> 附 AI 模拟声明</label>
+        <label class="menu-opt"><input type="checkbox" id="optQa"> 附协同问答</label>
+      </div>
+    </div>
+    <button class="btn primary-outline" id="panelToggle">协同提问 <span class="badge" id="basketCount">0</span></button>
+  </div>
+</header>
+
+<div class="layout" id="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="progress-card" id="progressCard"></div>
+    <div class="nav-tree" id="navTree"></div>
+  </nav>
+
+  <main class="main" id="main">
+    <article class="doc" id="doc"></article>
+  </main>
+
+  <aside class="panel" id="panel">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">协同提问</div>
+        <div class="panel-sub">把原文位置连同问题一起交给 Agent</div>
+      </div>
+      <button class="icon-btn" id="panelClose" title="收起">×</button>
+    </div>
+    <div class="panel-body">
+      <section>
+        <div class="sec-title">引用篮 <button class="link" id="basketClear">清空</button></div>
+        <div id="basket" class="basket"></div>
+      </section>
+      <section>
+        <div class="sec-title">提问对象</div>
+        <div class="seg" id="targetSeg">
+          <button data-v="教练（跳出角色）" class="on">教练</button>
+          <button data-v="原发言辩手（保持人设）">原辩手</button>
+          <button data-v="对方辩手（保持人设）">对方辩手</button>
+          <button data-v="评委">评委</button>
+        </div>
+      </section>
+      <section>
+        <div class="sec-title">意图</div>
+        <div class="chips" id="intentChips">
+          <button data-v="解释" class="on">解释</button>
+          <button data-v="反驳">反驳</button>
+          <button data-v="补强">补强</button>
+          <button data-v="核验事实">核验事实</button>
+          <button data-v="改写">改写</button>
+          <button data-v="自定义">自定义</button>
+        </div>
+      </section>
+      <section>
+        <div class="sec-title">问题</div>
+        <textarea id="question" rows="4" placeholder="例如：这一问有没有更狠的追法？"></textarea>
+      </section>
+      <div class="panel-actions">
+        <button class="btn primary" id="copyAsk">复制提问 · 粘贴给 Agent</button>
+        <button class="btn" id="queueAsk" title="写入 qa/threads.jsonl，Agent 执行 /ask 批量处理">加入待答队列</button>
+      </div>
+      <details class="preview">
+        <summary>预览剪贴板内容</summary>
+        <pre id="askPreview"></pre>
+      </details>
+      <section>
+        <div class="sec-title">本场问答 <span class="muted" id="threadStats"></span></div>
+        <div id="threadList" class="thread-list"></div>
+      </section>
+    </div>
+  </aside>
+</div>
+
+<div id="selPop" class="sel-pop" hidden>
+  <button data-act="sel-copy">复制位置并提问</button>
+  <button data-act="sel-add">＋ 加入引用篮</button>
+</div>
+<div id="toast" class="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

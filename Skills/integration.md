@@ -1,6 +1,6 @@
 ---
 name: Debate-Skills/skills-integration
-version: 2.5.0
+version: 3.0.0
 description: |
   教模型「在 Debate 流程的哪一步、为什么、怎么」调用三个第三方 Skill：
     1. debate-master            —— 辩论方法论百科
@@ -14,6 +14,13 @@ description: |
 > 阅读建议：
 > - 第一次：从头读到尾，理解三个 skill 各管什么；
 > - 跑流程时：按 §5「阶段路由表」查"我现在该不该调用"。
+>
+> **命名说明**：第三个依赖的目录名是 `pskoett-self-improving-agent-3.0.21/`（商店名 self-improving-agent），
+> 但它的 Skill 名（SKILL.md frontmatter 的 `name`）是 **`self-improvement`**——调用时一律写
+> `Skill(skill="self-improvement")`。
+>
+> **★v3 第四个外部能力**：历史实录检索改走 debatetimer.cn 官方 MCP（不是 Skill，而是 MCP 服务），
+> 用法见 `knowledge/06-历史实录检索.md §2.4`；未安装时用 `python3 tools/debatetimer.py` 兜底。
 
 ---
 
@@ -298,6 +305,9 @@ Skill(skill="self-improvement")
 | review 每轮复盘 | ✅ 自查改稿 | ✅ 找攻击点 | ✅ 写 best_practice |
 
 > ✅ = 必做  ⚠ = 按需做  - = 不需要
+>
+> ★v3：阶段 B 的 §3B.0 另需 debatetimer MCP（✅ 首选），兜底顺序：`tools/debatetimer.py` → multi-search-engine 的
+> `site:debatetimer.cn` 检索。所有检索得到的 URL 同步登记会话目录的 `evidence.md`（templates/evidence_ledger.md）。
 
 ---
 
@@ -310,6 +320,7 @@ Skill(skill="self-improvement")
 [ ] Skill(multi-search-engine)      可用？
 [ ] Skill(self-improvement)         可用？（v2 新依赖，可选但推荐）
 [ ] .learnings/ 目录存在？           （首次使用 self-improvement 会自动建）
+[ ] debatetimer MCP 可用？           （★v3，可选；否则 python3 tools/debatetimer.py）
 
 任一✅项不可用 → 按 ../SKILL.md §2 / 本文件 §3.3 安装。
 任一⚠项不可用 → 降级运行：
